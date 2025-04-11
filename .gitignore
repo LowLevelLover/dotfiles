@@ -6,4 +6,4 @@
 .config/variety/.firstrun
 .config/variety/.last_change_time
 
-*/**.log
+.config/*/**.log

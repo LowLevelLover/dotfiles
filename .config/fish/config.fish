@@ -16,8 +16,23 @@ if status is-interactive
     end
 end
 
+# if not set -q ZELLIJ
+#     if test "$ZELLIJ_AUTO_ATTACH" = true
+#         zellij attach -c
+#     else
+#         zellij
+#     end
+
+#     if test "$ZELLIJ_AUTO_EXIT" = true
+#         kill $fish_pid
+#     end
+# end
+
 alias l='eza -lh  --icons=auto' # long list
 alias ls='eza -1   --icons=auto' # short list
 alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long list all
 alias ld='eza -lhD --icons=auto' # long list dirs
 alias lt='eza --icons=auto --tree' # list folder as tree
+
+alias zellij='nix run $HOME/nixos-config/.#zellij'
+alias zj='zellij'

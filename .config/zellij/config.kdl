@@ -274,7 +274,7 @@ load_plugins {
 // Choose the theme that is specified in the themes section.
 // Default: default
 // 
-// theme "dracula"
+theme "dracula"
  
 // Choose the base input mode of zellij.
 // Default: normal
@@ -284,7 +284,7 @@ default_mode "normal"
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
 // 
-// default_shell "fish"
+default_shell "fish"
  
 // Choose the path to override cwd that zellij will use for opening new panes
 // 
@@ -298,7 +298,7 @@ default_mode "normal"
 // The folder in which Zellij will look for layouts
 // (Requires restart)
 // 
-// layout_dir "/tmp"
+layout_dir "/tmp"
  
 // The folder in which Zellij will look for themes
 // (Requires restart)
@@ -319,7 +319,7 @@ default_mode "normal"
 //   - true (default, enabled)
 //   - false
 // 
-// pane_frames false
+pane_frames false
  
 // When attaching to an existing session with other users,
 // should the session be mirrored (true)
@@ -345,7 +345,7 @@ default_mode "normal"
 // Valid values: positive integers
 // Default value: 10000
 // 
-// scroll_buffer_size 10000
+scroll_buffer_size 10000
  
 // Provide a command to execute when copying text. The text will be piped to
 // the stdin of the program to perform the copy. This can be used with
@@ -395,21 +395,21 @@ default_mode "normal"
 //   - true (default)
 //   - false
 // 
-// auto_layout false
+auto_layout false
  
 // Whether sessions should be serialized to the cache folder (including their tabs/panes, cwds and running commands) so that they can later be resurrected
 // Options:
 //   - true (default)
 //   - false
 // 
-// session_serialization false
+session_serialization false
  
 // Whether pane viewports are serialized along with the session, default is false
 // Options:
 //   - true
 //   - false (default)
 // 
-// serialize_pane_viewport false
+// serialize_pane_viewport true
  
 // Scrollback lines to serialize along with the pane viewport when serializing sessions, 0
 // defaults to the scrollback size. If this number is higher than the scrollback size, it will
@@ -422,7 +422,7 @@ default_mode "normal"
 // (Requires restart)
 // Default: true
 // 
-// styled_underlines false
+styled_underlines false
  
 // How often in seconds sessions are serialized
 // 
@@ -433,10 +433,12 @@ default_mode "normal"
 // (Requires restart)
 // Default: false
 // 
-// disable_session_metadata false
+disable_session_metadata false
  
 // Enable or disable support for the enhanced Kitty Keyboard Protocol (the host terminal must also support it)
 // (Requires restart)
 // Default: true (if the host terminal supports it)
 // 
-// support_kitty_keyboard_protocol false
+support_kitty_keyboard_protocol false
+
+disable-plugin-autostart true
