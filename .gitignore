@@ -1,0 +1,9 @@
+.config/variety/wallpaper/
+.config/variety/Downloaded/
+.config/variety/Favorites/
+.config/variety/Fetched/
+.config/variety/history.txt
+.config/variety/.firstrun
+.config/variety/.last_change_time
+
+*/**.log
