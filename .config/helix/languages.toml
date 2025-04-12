@@ -1,0 +1,22 @@
+[[language]]
+name = "python"
+language-id = "python"
+roots = ["pyproject.toml", ".git", ".jj", ".venv/"]
+language-servers = ["basedpyright", "ruff"]
+auto-format = true
+formatter = { command = "ruff", args = ["format", "-" ] }
+file-types = ["py", "ipynb"]
+comment-token = "#"
+shebangs = ["python"]
+
+[language-server.basedpyright]
+command = "basedpyright-langserver"
+args = ["--stdio"]
+
+[language-server.basedpyright.config]
+
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+environment = { "RUFF_TRACE" = "messages" }
