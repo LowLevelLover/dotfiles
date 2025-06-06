@@ -36,3 +36,8 @@ alias lt='eza --icons=auto --tree' # list folder as tree
 
 alias zellij='nix run $HOME/nixos-config/.#zellij'
 alias zj='zellij'
+
+if not set -q SSH_AUTH_SOCK
+    eval (ssh-agent -c)
+    ssh-add ~/.ssh/id_ed25519
+end
