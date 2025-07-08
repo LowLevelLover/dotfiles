@@ -16,6 +16,8 @@ if status is-interactive
     end
 end
 
+set PATH "$HOME/.cargo/bin:$PATH"
+
 # if not set -q ZELLIJ
 #     if test "$ZELLIJ_AUTO_ATTACH" = true
 #         zellij attach -c
@@ -34,10 +36,23 @@ alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long li
 alias ld='eza -lhD --icons=auto' # long list dirs
 alias lt='eza --icons=auto --tree' # list folder as tree
 
-alias zellij='nix run $HOME/nixos-config/.#zellij'
+#alias zellij='nix run $HOME/nixos-config/.#zellij'
 alias zj='zellij'
+alias k='kubectl'
+#alias cursor='nix run $HOME/nixos-config/.#code-cursor'
 
 if not set -q SSH_AUTH_SOCK
     eval (ssh-agent -c)
     ssh-add ~/.ssh/id_ed25519
+end
+
+set -q KREW_ROOT; and set -gx PATH $PATH $KREW_ROOT/.krew/bin; or set -gx PATH $PATH $HOME/.krew/bin
+
+function kgent
+    set pod (kubectl get pod | awk '/ai-agent-core/ {print $1}')
+    if test -n "$pod"
+        kubectl logs -f $pod
+    else
+        echo "No pod found matching 'ai-agent-core'"
+    end
 end
