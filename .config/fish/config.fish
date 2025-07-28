@@ -39,7 +39,7 @@ alias lt='eza --icons=auto --tree' # list folder as tree
 #alias zellij='nix run $HOME/nixos-config/.#zellij'
 alias zj='zellij'
 alias k='kubectl'
-#alias cursor='nix run $HOME/nixos-config/.#code-cursor'
+#alias cursor='__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia cursor --proxy-server="http://192.168.87.129:10809" "$@"'
 
 if not set -q SSH_AUTH_SOCK
     eval (ssh-agent -c)
