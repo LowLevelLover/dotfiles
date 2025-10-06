@@ -1,5 +1,4 @@
-# theme = "github_dark"
-theme = "gruvbox_dark_hard"
+theme = "github_light"
 
 [editor]
 line-number = "relative"
