@@ -80,6 +80,7 @@ if [[ "$DE" == *"hyprland"* ]]; then
 
     # Set the wallpaper with swww
     swww img -o "$FOCUSED_MONITOR" "$WP" $SWWW_PARAMS
+    ln -sf "$WP" "$HOME/.config/hypr/wallpaper_effects/.wallpaper_current"
 fi
 
 if [ "$DE" == "enlightenment" ]; then

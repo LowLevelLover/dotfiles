@@ -7,9 +7,9 @@
 /* define some colors */
 @define-color border-color @color12;
 @define-color border-color-alt @color9;
-@define-color text-color rgba(255, 255, 255, 0.7);
-@define-color noti-bg rgba(0, 0, 0, 0.4);
-@define-color noti-bg-alt #111111;
+@define-color text-color rgba(0, 0, 0, 0.7);
+@define-color noti-bg rgba(255, 255, 255, 0.4);
+@define-color noti-bg-alt #F0F0F0;
 
 widget {
   border-radius: 0.818rem;
