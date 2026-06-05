@@ -4,7 +4,7 @@
 
 # variables
 time=$(date "+%d-%b_%H-%M-%S")
-dir="$(xdg-user-dir)/Pictures/Screenshots"
+dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
 file="Screenshot_${time}_${RANDOM}.png"
 
 iDIR="$HOME/.config/swaync/icons"
@@ -38,18 +38,6 @@ notify_view() {
             ${notify_cmd_NOT} " Screenshot of:" " ${active_window_class} NOT Saved."
             "${sDIR}/Sounds.sh" --error
         fi
-
-    elif [[ "$1" == "swappy" ]]; then
-		"${sDIR}/Sounds.sh" --screenshot
-		resp=$(${notify_cmd_shot} " Screenshot:" " Captured by Swappy")
-		case "$resp" in
-			action1)
-				swappy -f - <"$tmpfile"
-				;;
-			action2)
-				rm "$tmpfile"
-				;;
-		esac
 
     else
         local check_file="${dir}/${file}"
@@ -128,15 +116,15 @@ shotactive() {
     notify_view "active"
 }
 
-shotswappy() {
-	tmpfile=$(mktemp)
-	grim -g "$(slurp)" - >"$tmpfile" 
+shotsatty() {
+	tmpfile=$(mktemp --suffix=.png)
+	grim -g "$(slurp)" - >"$tmpfile"
 
-  # Copy without saving
-  if [[ -s "$tmpfile" ]]; then
-		wl-copy <"$tmpfile"
-    notify_view "swappy"
-  fi
+	if [[ -s "$tmpfile" ]]; then
+		"${sDIR}/Sounds.sh" --screenshot
+		satty --filename "$tmpfile" --output-filename "${dir}/${file}" --copy-command "wl-copy" --early-exit --actions-on-enter save-to-clipboard,save-to-file,exit
+		rm -f "$tmpfile"
+	fi
 }
 
 if [[ ! -d "$dir" ]]; then
@@ -155,10 +143,10 @@ elif [[ "$1" == "--area" ]]; then
 	shotarea
 elif [[ "$1" == "--active" ]]; then
 	shotactive
-elif [[ "$1" == "--swappy" ]]; then
-	shotswappy
+elif [[ "$1" == "--satty" ]]; then
+	shotsatty
 else
-	echo -e "Available Options : --now --in5 --in10 --win --area --active --swappy"
+	echo -e "Available Options : --now --in5 --in10 --win --area --active --satty"
 fi
 
 exit 0
