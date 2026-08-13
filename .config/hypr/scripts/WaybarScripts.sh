@@ -3,7 +3,9 @@
 # This file used on waybar modules sourcing defaults set in $HOME/.config/hypr/UserConfigs/01-UserDefaults.conf
 
 # Define the path to the config file
-config_file=$HOME/.config/hypr/UserConfigs/01-UserDefaults.conf
+# NOTE: defaults moved from 01-UserDefaults.conf (hyprlang) to
+# 01-UserDefaults.lua when the Hyprland config moved to Lua.
+config_file=$HOME/.config/hypr/UserConfigs/01-UserDefaults.lua
 
 # Check if the config file exists
 if [[ ! -f "$config_file" ]]; then
@@ -11,11 +13,14 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
-# Process the config file in memory, removing the $ and fixing spaces
-config_content=$(sed 's/\$//g' "$config_file" | sed 's/ = /=/')
+# Pull a `key = "value",` entry out of the Lua defaults table
+lua_default() {
+    sed -n "s/^[[:space:]]*$1[[:space:]]*=[[:space:]]*\"\([^\"]*\)\".*$/\1/p" "$config_file" | head -n1
+}
 
-# Source the modified content directly from the variable
-eval "$config_content"
+term=$(lua_default term)
+files=$(lua_default files)
+Search_Engine=$(lua_default search_engine)
 
 # Check if $term is set correctly
 if [[ -z "$term" ]]; then

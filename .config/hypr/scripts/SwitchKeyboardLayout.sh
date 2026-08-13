@@ -3,8 +3,12 @@
 # This is for changing kb_layouts. Set kb_layouts in $settings_file
 
 layout_file="$HOME/.cache/kb_layout"
-settings_file="$HOME/.config/hypr/UserConfigs/UserSettings.conf"
 notif_icon="$HOME/.config/swaync/images/ja.png"
+
+# NOTE: this used to grep `kb_layout = ` out of UserSettings.conf. The config is
+# Lua now, so the layout list is read straight from the running compositor --
+# which is authoritative regardless of how the config is written.
+kb_layout_line=$(hyprctl -j getoption input.kb_layout | jq -r '.str' | tr -d '[:space:]')
 
 # Refined ignore list with patterns or specific device names
 ignore_patterns=(
@@ -18,7 +22,7 @@ ignore_patterns=(
 # Create layout file with default layout if it does not exist
 if [ ! -f "$layout_file" ]; then
   echo "Creating layout file..."
-  default_layout=$(grep 'kb_layout = ' "$settings_file" | cut -d '=' -f 2 | tr -d '[:space:]' | cut -d ',' -f 1 2>/dev/null)
+  default_layout=$(echo "$kb_layout_line" | cut -d ',' -f 1)
   default_layout=${default_layout:-"us"} # Default to 'us' layout
   echo "$default_layout" > "$layout_file"
   echo "Default layout set to $default_layout"
@@ -27,16 +31,12 @@ fi
 current_layout=$(cat "$layout_file")
 echo "Current layout: $current_layout"
 
-# Read available layouts from settings file
-if [ -f "$settings_file" ]; then
-  kb_layout_line=$(grep 'kb_layout = ' "$settings_file" | cut -d '=' -f 2)
-  # Remove leading and trailing spaces around each layout
-  kb_layout_line=$(echo "$kb_layout_line" | tr -d '[:space:]')
-  IFS=',' read -r -a layout_mapping <<< "$kb_layout_line"
-else
-  echo "Settings file not found!"
+# Split the available layouts (read from the compositor above)
+if [ -z "$kb_layout_line" ] || [ "$kb_layout_line" = "null" ]; then
+  echo "Could not read input.kb_layout from Hyprland!"
   exit 1
 fi
+IFS=',' read -r -a layout_mapping <<< "$kb_layout_line"
 
 layout_count=${#layout_mapping[@]}
 echo "Number of layouts: $layout_count"

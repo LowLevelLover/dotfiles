@@ -1,30 +1,33 @@
 #!/usr/bin/env bash
 # /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
-# for changing Hyprland Layouts (Master or Dwindle) on the fly
+# Toggle between the dwindle and master layouts
+#
+# NOTE: `hyprctl keyword` (including `keyword bind` / `keyword unbind`) was
+# removed when the config moved to Lua. Everything now goes through
+# `hyprctl eval` with the hl.* API.
 
 notif="$HOME/.config/swaync/images/ja.png"
 
-LAYOUT=$(hyprctl -j getoption general:layout | jq '.str' | sed 's/"//g')
+LAYOUT=$(hyprctl -j getoption general.layout | jq -r '.str')
 
-case $LAYOUT in
-"master")
-	hyprctl keyword general:layout dwindle
-	hyprctl keyword unbind SUPER,J
-	hyprctl keyword unbind SUPER,K
-	hyprctl keyword bind SUPER,J,cyclenext
-	hyprctl keyword bind SUPER,K,cyclenext,prev
-	hyprctl keyword bind SUPER,O,togglesplit
-  notify-send -e -u low -i "$notif" " Dwindle Layout"
-	;;
-"dwindle")
-	hyprctl keyword general:layout master
-	hyprctl keyword unbind SUPER,J
-	hyprctl keyword unbind SUPER,K
-	hyprctl keyword unbind SUPER,O
-	hyprctl keyword bind SUPER,J,layoutmsg,cyclenext
-	hyprctl keyword bind SUPER,K,layoutmsg,cycleprev
-  notify-send -e -u low -i "$notif" " Master Layout"
-	;;
-*) ;;
-
-esac
+if [ "$LAYOUT" == "master" ]; then
+	hyprctl eval '
+		hl.config({ general = { layout = "dwindle" } })
+		hl.unbind("SUPER + J")
+		hl.unbind("SUPER + K")
+		hl.bind("SUPER + J", hl.dsp.window.cycle_next())
+		hl.bind("SUPER + K", hl.dsp.window.cycle_next({ next = false }))
+		hl.bind("SUPER + O", hl.dsp.layout("togglesplit"))
+	' >/dev/null
+	notify-send -e -u low -i "$notif" "Layout" "dwindle"
+else
+	hyprctl eval '
+		hl.config({ general = { layout = "master" } })
+		hl.unbind("SUPER + J")
+		hl.unbind("SUPER + K")
+		hl.unbind("SUPER + O")
+		hl.bind("SUPER + J", hl.dsp.layout("cyclenext"))
+		hl.bind("SUPER + K", hl.dsp.layout("cycleprev"))
+	' >/dev/null
+	notify-send -e -u low -i "$notif" "Layout" "master"
+fi

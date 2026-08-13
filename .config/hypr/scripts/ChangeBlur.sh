@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 # /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
-# Script for changing blurs on the fly
+# Script for changing blur on the fly
+#
+# NOTE: `hyprctl keyword` was removed when the config moved to Lua.
+# Options are now set with `hyprctl eval` + hl.config(), and read with
+# `hyprctl getoption` using dot-separated names (decoration.blur.passes).
 
 notif="$HOME/.config/swaync/images"
 
-STATE=$(hyprctl -j getoption decoration:blur:passes | jq ".int")
+STATE=$(hyprctl -j getoption decoration.blur.passes | jq ".int")
 
 if [ "${STATE}" == "2" ]; then
-	hyprctl keyword decoration:blur:size 2
-	hyprctl keyword decoration:blur:passes 1
- 	notify-send -e -u low -i "$notif/note.png" " Less Blur"
+	hyprctl eval 'hl.config({ decoration = { blur = { size = 2, passes = 1 } } })' >/dev/null
+	notify-send -e -u low -i "$notif/note.png" " Less Blur"
 else
-	hyprctl keyword decoration:blur:size 5
-	hyprctl keyword decoration:blur:passes 2
-  	notify-send -e -u low -i "$notif/ja.png" " Normal Blur"
+	hyprctl eval 'hl.config({ decoration = { blur = { size = 5, passes = 2 } } })' >/dev/null
+	notify-send -e -u low -i "$notif/ja.png" " Normal Blur"
 fi

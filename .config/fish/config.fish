@@ -16,6 +16,7 @@ if status is-interactive
     end
 end
 
+set -gx PATH "$HOME/.local/bin" $PATH
 set PATH "$HOME/.cargo/bin:$PATH"
 
 # if not set -q ZELLIJ

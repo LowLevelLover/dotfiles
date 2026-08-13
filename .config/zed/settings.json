@@ -7,9 +7,28 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "helix_mode": true,
+  "auto_update": false,
+  "proxy": "",
+  "disable_ai": false,
+  "search": {
+    "regex": true
+  },
+  "use_smartcase_search": true,
+  "colorize_brackets": true,
+  "show_whitespaces": "all",
+  "indent_guides": {
+    "background_coloring": "disabled",
+    "coloring": "indent_aware"
+  },
+  "soft_wrap": "prefer_line",
+  "vim": {
+    "use_smartcase_find": true,
+    "toggle_relative_line_numbers": false
+  },
+  "relative_line_numbers": "enabled",
+  "auto_signature_help": true,
+  "helix_mode": false,
   "base_keymap": "JetBrains",
-  "cursor_shape": "block",
   "buffer_font_family": "FiraCode Nerd Font Mono",
   "agent_servers": {
     "claude-acp": {
@@ -51,7 +70,7 @@
   "git_panel": {
     "dock": "left"
   },
-  "vim_mode": false,
+  "vim_mode": true,
   "ui_font_size": 20,
   "buffer_font_size": 18,
   "theme": {
