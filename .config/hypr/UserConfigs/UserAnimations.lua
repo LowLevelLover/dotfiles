@@ -1,5 +1,4 @@
 -- /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  --
---
 -- name "End-4"
 -- credit https://github.com/end-4/dots-hyprland
 --

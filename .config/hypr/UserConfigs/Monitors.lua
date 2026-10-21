@@ -15,7 +15,7 @@ hl.monitor({
   mode     = "2560x1600@240.0",
   position = "auto",
   scale    = 1.25,
-  bitdepth = 8,
+  bitdepth = 10,
 })
 
 -- Fallback for any other/unknown output
