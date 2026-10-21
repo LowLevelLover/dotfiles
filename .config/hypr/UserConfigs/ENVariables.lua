@@ -35,8 +35,14 @@ hl.env("QT_QUICK_CONTROLS_STYLE", "org.hyprland.style")
 -- hl.env("QT_SCALE_FACTOR", "1.25")
 
 -- Bibata-Modern-Amber cursor
--- NOTE: you must have the hyprcursor version to activate this.
--- https://wiki.hypr.land/Hypr-Ecosystem/hyprcursor/
+-- The installed theme is XCursor-only, so XCURSOR_* is what actually applies it.
+-- Without these, GTK/Qt/Electron/XWayland clients each fell back to their own
+-- default (Adwaita / whiteglove), giving a different cursor shape and size
+-- depending on which window the pointer was over.
+hl.env("XCURSOR_THEME", "Bibata-Modern-Amber")
+hl.env("XCURSOR_SIZE", "24")
+-- Kept so it works unchanged if a hyprcursor build of the theme is installed
+-- and cursor.enable_hyprcursor is turned on.
 hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Amber")
 hl.env("HYPRCURSOR_SIZE", "24")
 
@@ -59,7 +65,7 @@ hl.env("__GL_GSYNC_ALLOWED", "1") -- adaptive Vsync
 -- hl.env("__NV_PRIME_RENDER_OFFLOAD", "1")
 -- hl.env("__VK_LAYER_NV_optimus", "NVIDIA_only")
 -- hl.env("WLR_DRM_NO_ATOMIC", "1")
-hl.env("WLR_RENDERER", "vulkan")
+-- (WLR_RENDERER removed: wlroots-only, Hyprland/aquamarine ignores it)
 
 -- FOR VM AND POSSIBLY NVIDIA
 -- LIBGL_ALWAYS_SOFTWARE -- software mesa rendering

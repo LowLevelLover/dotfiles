@@ -12,15 +12,6 @@
 -- Each require() gets its own Lua scope, so an error in one file does not stop
 -- the others from loading.
 
--- NOTE: the old hyprland.conf had
---   exec-once = $HOME/.config/hypr/initial-boot.sh
--- but the file on disk is spelled "inital-boot.sh" (and is not executable), so
--- that line never ran and the ~/.config/hypr/.initial_startup_done marker was
--- never created. It is a one-shot dotfiles installer that overwrites the waybar
--- style, kvantum/gtk/icon/cursor themes with JaKooLit defaults, so it is left
--- disabled here on purpose rather than being "fixed" into running.
--- To run it deliberately: bash ~/.config/hypr/inital-boot.sh
-
 -- ## This is where you want to start tinkering ## --
 
 require("UserConfigs.Startup_Apps")     -- start-up applications

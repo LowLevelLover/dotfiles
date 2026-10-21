@@ -38,7 +38,8 @@ hl.on("hyprland.start", function()
   -- startup apps
   hl.exec_cmd("nm-applet --indicator")
   hl.exec_cmd("swaync")
-  hl.exec_cmd("ags")
+  -- NOTE: `ags` removed. The installed ags is v2 (Astal), where a bare `ags`
+  -- only prints help; ~/.config/ags is an AGS v1 config, so it never ran.
   hl.exec_cmd("blueman-applet")
   hl.exec_cmd("rog-control-center")
   hl.exec_cmd("waybar")
@@ -53,22 +54,13 @@ hl.on("hyprland.start", function()
   -- hypridle, to drive hyprlock
   hl.exec_cmd("hypridle")
 
-  hl.exec_cmd("hyprdim")
+  -- NOTE: `hyprdim` removed. It crashes on start against the Lua config
+  -- (hyprland-rs cannot parse decoration:dim_inactive), and
+  -- decoration.dim_inactive in UserDecorations.lua already dims inactive windows.
 
   hl.exec_cmd("hyprctl setcursor Bibata-Modern-Amber 24")
 end)
 
--- NOTE: polkit authentication agent
--- The old .conf ran scripts/Polkit.sh and `systemctl --user start hyprpolkitagent`.
--- Polkit.sh only probes FHS paths (/usr/lib, /usr/libexec) and is a no-op on
--- NixOS. hyprpolkitagent is now started declaratively as a systemd user service
--- bound to hyprland-session.target -- see nixos-config/configuration.nix -- so
--- there is nothing to launch from here.
-
--- NOTE: xdg-desktop-portal-hyprland
--- The old .conf ran scripts/PortalHyprland.sh at every startup. On NixOS that
--- script is actively harmful: it `killall`s xdg-desktop-portal and
--- xdg-desktop-portal-hyprland, then tries to restart them from /usr/lib and
--- /usr/libexec, which do not exist here -- so it killed the portal and left it
--- dead. The portal is D-Bus activated and systemd-managed on NixOS; it must not
--- be started by hand.
+-- NOTE: xdg-desktop-portal-hyprland is D-Bus activated and systemd-managed on
+-- NixOS; do not start or kill it by hand (the old PortalHyprland.sh did, and
+-- left the portal dead).

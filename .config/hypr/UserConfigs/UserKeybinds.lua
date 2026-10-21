@@ -19,7 +19,8 @@ local files = defaults.files or "thunar"
 -- hl.bind(mainMod .. " + " .. mainMod .. "_L", hl.dsp.exec_cmd("pkill rofi || rofi -show drun -modi drun,filebrowser,run,window"), { release = true })
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("pkill rofi || true && rofi -show drun -modi drun,filebrowser,run,window"), { description = "Main menu (app launcher)" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd('xdg-open "https://"'), { description = "Default browser" })
-hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("pkill rofi || true && ags -t 'overview'"), { description = "Desktop overview" })
+-- NOTE: dead -- `ags -t` is AGS v1 syntax and the installed ags is v2, so this did nothing.
+-- hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("pkill rofi || true && ags -t 'overview'"), { description = "Desktop overview" })
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(term),  { description = "Terminal" })
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(files), { description = "File manager" })
 
