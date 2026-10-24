@@ -23,3 +23,7 @@ require("UserConfigs.UserSettings")     -- main Hyprland settings
 
 require("configs.Keybinds")             -- pre-configured keybinds
 require("UserConfigs.UserKeybinds")     -- put your own keybinds here
+
+-- Added by Hyprland Settings (Noctalia plugin): loads the file its panel writes.
+-- Move it up if a later block here must win over the panel.
+require("hyprland-settings")

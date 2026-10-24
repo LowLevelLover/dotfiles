@@ -19,9 +19,7 @@ local Touchpad_Device = "asue120d:00-04f3:31fb-touchpad"
 -- driven over UPower (asus::kbd_backlight, levels 0-3: one level per press).
 hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(ipc .. "keyboard-backlight-down"), { repeating = true })
 hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd(ipc .. "keyboard-backlight-up"),   { repeating = true })
--- logind ignores the power key (HandlePowerKey = "ignore" in configuration.nix),
--- so a press only opens the session menu and nothing happens without a choice.
-hl.bind("XF86PowerOff", hl.dsp.exec_cmd(ipc .. "panel-toggle session"), { description = "Power button: session menu" })
+-- The power key is not bound here: logind powers off (HandlePowerKey in configuration.nix).
 hl.bind("XF86Launch1", hl.dsp.exec_cmd("rog-control-center"),  { description = "ASUS Armoury Crate button" })
 hl.bind("XF86Launch3", hl.dsp.exec_cmd("asusctl led-mode -n"), { description = "FN+F4 switch keyboard RGB profile" })
 hl.bind("XF86Launch4", hl.dsp.exec_cmd("asusctl profile -n"),  { description = "FN+F5 change fan profile" })

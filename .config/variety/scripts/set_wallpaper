@@ -76,8 +76,12 @@ if [[ "$DE" == *"hyprland"* ]]; then
     DURATION=2
     BEZIER=".43,1.19,1,.4"
     AWWW_PARAMS="--transition-fps $FPS --transition-type $TYPE --transition-duration $DURATION --transition-bezier $BEZIER"
-    if ! pgrep -x "awww-daemon" >/dev/null; then
-        awww-daemon &
+    # On NixOS the daemon runs as .awww-daemon-wrapped, so `pgrep -x` never
+    # matched and every rotation spawned a duplicate that aborted. Ask the
+    # daemon over its socket instead; same flags as Startup_Apps.lua.
+    if ! awww query >/dev/null 2>&1; then
+        awww-daemon --format xrgb &
+        sleep 0.5
     fi
     awww img -o "$FOCUSED_MONITOR" "$WP" $AWWW_PARAMS
     ln -sf "$WP" "$HOME/.config/hypr/wallpaper_effects/.wallpaper_current"

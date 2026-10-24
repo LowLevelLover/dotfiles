@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Battery-aware display profile for Hyprland.
 #
-#   battery  60 Hz, 8-bit colour, no blur / shadow / dim_inactive
+#   battery  60 Hz, 8-bit colour, no blur / shadow / dim_inactive, opaque windows
 #   ac       `hyprctl reload`, which restores everything from the Lua config
-#            (240 Hz, 10-bit, blur, ...)
+#            (240 Hz, 10-bit, blur, ...) and drops the rules added here
 #
 # Usage: PowerProfile.sh [auto|battery|ac]   (default: auto)
 #
@@ -46,8 +46,15 @@ battery)
                 dim_inactive = false,
             },
         })
+        -- Registered after WindowRules.lua, so these win. "override" sets the
+        -- alpha outright instead of multiplying it, which lets Hyprland skip
+        -- blending and drawing what is hidden behind each window. kitty draws
+        -- its own translucent background (background_opacity), so drop its
+        -- alpha channel as well.
+        hl.window_rule({ match = { class = ".*" }, opacity = "1 override 1 override 1 override" })
+        hl.window_rule({ match = { class = "^(kitty|kitty-dropterm)$" }, force_rgbx = true })
     ' >/dev/null
-    msg="battery: 60 Hz, effects off"
+    msg="battery: 60 Hz, effects off, windows opaque"
     ;;
 ac)
     # No previous state means Hyprland just started with the full config

@@ -99,7 +99,10 @@ position = "top"
 font_family = "FiraCode Nerd Font"
 margin_edge = 3      # waybar margin-top
 margin_ends = 8      # waybar margin-left/right
-start = ["workspaces", "cpu", "cpu-cat", "memory", "weather", "bongocat"]
+start = [
+  "workspaces", "cpu", "cpu-cat", "memory", "weather", "bongocat",
+  "claude", "github-prs", "github-activity", "k8s",
+]
 center = [
   "launcher", "caffeine", "clock", "jalali-date", "world-clock", "timer",
   "theme_mode", "keybind-cheatsheet",
@@ -107,7 +110,7 @@ center = [
 end = [
   "notes", "shelf", "hyprland-settings", "drive-health",
   "network", "net-monitor",
-  "notifications", "tray", "media", "bluetooth",
+  "notifications", "tray", "media", "bluetooth", "soundcore",
   "volume", "microphone", "lock_keys", "battery",
   "keyboard_layout", "session",
 ]
@@ -200,6 +203,14 @@ type = "dotnetrob/cat:cat"                        # runs faster with CPU load
 
 [widget.bongocat]
 type = "noctalia/bongocat:cat"
+# Typing goes through bongocat-keys (nixos-config/noctalia-plugins.nix), which
+# reads every keyboard and passes on only key up/down, so farzin stays out of
+# the input group. The device is just the path the plugin checks for.
+input_devices = ["/dev/input/by-path/platform-i8042-serio-0-event-kbd"]
+executable_path = "/run/current-system/sw/bin/noctalia-bongocat-keys"
+audio_spectrum = true  # PipeWire spectrum
+tappy_mode = true      # taps to the beat of any audio (use_mpris_filter is off)
+rave_mode = false      # true: flashes a rainbow colour on each beat
 
 [widget.jalali-date]
 type = "borderliner/jalali_calendar:date"         # Solar Hijri date; click: calendar
@@ -227,6 +238,21 @@ type = "gustav0ar/drive-health:summary"
 
 [widget.net-monitor]
 type = "mahmoudomiesh/network-monitor:indicator"  # speed + listening ports
+
+[widget.claude]
+type = "lfdominguez/claude-sessions:bar"          # Claude Code sessions + plan limits
+
+[widget.github-prs]
+type = "raycursive/github-prs:bar"                # open PRs (author:@me) via gh
+
+[widget.github-activity]
+type = "alexmnrs/github-activity:activity"        # today's contributions via gh
+
+[widget.k8s]
+type = "davemhammer/k8s-status:status"            # current kubectl context
+
+[widget.soundcore]
+type = "sankity/soundcore-buds:soundcore"         # hidden while the buds are disconnected
 
 # --- Notifications -------------------------------------------------------------
 
@@ -390,7 +416,6 @@ enabled = [
   "noctalia/world_clock",              # multi-timezone clock
   # community
   "dotnetrob/cat",                     # running cat, speed follows CPU usage
-  "blackbartblues/audio-switcher",     # output / input switcher, /audio
   "sankity/soundcore-buds",            # Soundcore battery / ANC via openscq30
   "borderliner/jalali_calendar",       # Solar Hijri calendar + Iranian holidays
   "lfdominguez/claude-sessions",       # live Claude Code sessions, /cs
@@ -414,3 +439,13 @@ python = "/run/current-system/sw/bin/noctalia-shelf-python"
 
 [plugin_settings."vn1k/cursor"]
 engine_path = "/run/current-system/sw/bin/noctalia-cursor-engine"
+
+# Full SMART: read the root collector's /run/noctalia-drive-health/raw.json
+# (noctalia-drive-health.timer in noctalia-plugins.nix).
+[plugin_settings."gustav0ar/drive-health"]
+system_collector_enabled = true
+
+# Each poll runs bluetoothctl (2-3 times, even with the buds disconnected) plus
+# openscq30; the default 4 s meant ~45 bluetoothd log lines a minute.
+[plugin_settings."sankity/soundcore-buds"]
+poll_interval = 15
