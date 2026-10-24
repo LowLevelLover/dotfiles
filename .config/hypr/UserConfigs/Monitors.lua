@@ -2,13 +2,7 @@
 -- Monitor configuration
 -- https://wiki.hypr.land/Configuring/Basics/Monitors/
 --
--- NOTE: nwg-displays used to write ~/.config/hypr/monitors.conf. It does not
--- know about the Lua config, so it will keep writing that .conf file and the
--- result will be ignored. Edit this file by hand instead (or re-apply the
--- values nwg-displays reports).
---
--- Previous monitors.conf:
---   monitor=eDP-1,2560x1600@240.0,auto,1.25,bitdepth,8
+-- scripts/PowerProfile.sh mirrors the eDP-1 line (60 Hz, 8-bit) on battery.
 
 hl.monitor({
   output   = "eDP-1",

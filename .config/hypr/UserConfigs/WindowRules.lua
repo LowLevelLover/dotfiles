@@ -19,7 +19,7 @@
 -- hl.window_rule({ match = { tag = "games" },       workspace = "8" })
 -- hl.window_rule({ match = { tag = "multimedia" },  workspace = "9 silent" })
 
-hl.window_rule({ match = { tag = "browser" }, no_blur = true, opacity = "1" })
+hl.window_rule({ match = { tag = "browser" }, no_blur = true })
 
 -- ##################################################################
 -- TAGS - add apps under the appropriate tag to use the same settings
@@ -35,13 +35,8 @@ hl.window_rule({ match = { class = "^(Brave-browser(-beta|-dev|-unstable)?)$" },
 hl.window_rule({ match = { class = "^([Tt]horium-browser|[Cc]achy-browser)$" },                          tag = "+browser" })
 hl.window_rule({ match = { class = "^(zen-alpha|zen)$" },                                                tag = "+browser" })
 
--- notif tags
-hl.window_rule({ match = { class = "^(swaync-control-center|swaync-notification-window|swaync-client|class)$" }, tag = "+notif" })
-
 -- KooL settings tags
-hl.window_rule({ match = { title = "^(KooL Quick Cheat Sheet)$" },  tag = "+KooL_Cheat" })
-hl.window_rule({ match = { title = "^(KooL Hyprland Settings)$" },  tag = "+KooL_Settings" })
-hl.window_rule({ match = { class = "^(nwg-displays|nwg-look)$" },   tag = "+KooL-Settings" })
+hl.window_rule({ match = { class = "^(nwg-look)$" }, tag = "+KooL-Settings" })
 
 -- terminal tags
 hl.window_rule({ match = { class = "^(Alacritty|kitty|kitty-dropterm)$" }, tag = "+terminal" })
@@ -94,15 +89,13 @@ hl.window_rule({ match = { class = "^([Mm]pv|vlc)$" }, tag = "+multimedia_video"
 hl.window_rule({ match = { title = "^(ROG Control)$" },                            tag = "+settings" })
 hl.window_rule({ match = { class = "^(wihotspot(-gui)?)$" },                       tag = "+settings" })
 hl.window_rule({ match = { class = "^([Bb]aobab|org.gnome.[Bb]aobab)$" },          tag = "+settings" })
-hl.window_rule({ match = { class = "^(gnome-disks|wihotspot(-gui)?)$" },           tag = "+settings" })
+hl.window_rule({ match = { class = "^(gnome-disks)$" },                            tag = "+settings" })
 hl.window_rule({ match = { title = "(Kvantum Manager)" },                          tag = "+settings" })
 hl.window_rule({ match = { class = "^(file-roller|org.gnome.FileRoller)$" },       tag = "+settings" })
-hl.window_rule({ match = { class = "^(nm-applet|nm-connection-editor|blueman-manager)$" }, tag = "+settings" })
+hl.window_rule({ match = { class = "^(blueman-manager)$" },                        tag = "+settings" })
 hl.window_rule({ match = { class = "^(pavucontrol|org.pulseaudio.pavucontrol|com.saivert.pwvucontrol)$" }, tag = "+settings" })
-hl.window_rule({ match = { class = "^(qt5ct|qt6ct)$" },                            tag = "+settings" })
+hl.window_rule({ match = { class = "^(qt6ct)$" },                                  tag = "+settings" })
 hl.window_rule({ match = { class = "(xdg-desktop-portal-gtk)" },                   tag = "+settings" })
-hl.window_rule({ match = { class = "^(org.kde.polkit-kde-authentication-agent-1)$" }, tag = "+settings" })
-hl.window_rule({ match = { class = "^([Rr]ofi)$" },                                tag = "+settings" })
 hl.window_rule({ match = { class = "^(btrfs-assistant)$" },                        tag = "+settings" })
 hl.window_rule({ match = { class = "^(timeshift-gtk)$" },                          tag = "+settings" })
 
@@ -118,31 +111,24 @@ hl.window_rule({ match = { class = "^(eog|org.gnome.Loupe)$" }, tag = "+viewer" 
 hl.window_rule({ match = { tag = "multimedia_video" }, no_blur = true })
 hl.window_rule({ match = { tag = "multimedia_video" }, opacity = "1.0" })
 hl.window_rule({ match = { tag = "multimedia" },       no_blur = true })
-hl.window_rule({ match = { tag = "multimedia" },       opacity = "1.0" })
 
 -- POSITION
-hl.window_rule({ match = { tag = "KooL_Cheat" },    center = true })
 hl.window_rule({ match = { tag = "KooL-Settings" }, center = true })
 hl.window_rule({ match = { title = "^(ROG Control)$" }, center = true })
-hl.window_rule({ match = { title = "^(Keybindings)$" }, center = true })
 hl.window_rule({ match = { class = "^(pavucontrol|org.pulseaudio.pavucontrol|com.saivert.pwvucontrol)$" }, center = true })
 hl.window_rule({ match = { class = "^([Ff]erdium)$" }, center = true })
 
 -- Avoid idling while a window is fullscreen.
--- NOTE: the old .conf had four overlapping attempts at this, two of which used
--- `^(*)$` -- not a valid RE2 pattern. Collapsed into the canonical form.
 hl.window_rule({ match = { class = ".*" }, idle_inhibit = "fullscreen" })
 
 -- FLOAT
-hl.window_rule({ match = { tag = "KooL_Cheat" },    float = true })
 hl.window_rule({ match = { tag = "wallpaper" },     float = true, center = true })
 hl.window_rule({ match = { tag = "settings" },      float = true, center = true })
 hl.window_rule({ match = { tag = "viewer" },        float = true, center = true })
 hl.window_rule({ match = { tag = "KooL-Settings" }, float = true, center = true })
 hl.window_rule({ match = { class = "([Zz]oom|onedriver|onedriver-launcher)" },   float = true })
-hl.window_rule({ match = { class = "(org.gnome.Calculator|qalculate-gtk)" },     float = true })
+hl.window_rule({ match = { class = "(org.gnome.Calculator|[Qq]alculate-gtk)" },  float = true })
 hl.window_rule({ match = { class = "^(mpv|com.github.rafostar.Clapper)$" },      float = true })
-hl.window_rule({ match = { class = "^([Qq]alculate-gtk)$" },                     float = true })
 hl.window_rule({ match = { class = "^([Ff]erdium)$" },                           float = true })
 
 -- popups and dialogues
@@ -176,14 +162,6 @@ hl.window_rule({
   match = { initial_title = "(Open Files)" },
   float = true, size = {"monitor_w*0.7", "monitor_h*0.6"},
 })
-hl.window_rule({
-  match = { title = "^(SDDM Background)$" },
-  float = true, center = true, size = {"monitor_w*0.16", "monitor_h*0.12"},
-})
-hl.window_rule({
-  match = { class = "^(yad)$" },
-  float = true, center = true, size = {"monitor_w*0.2", "monitor_h*0.2"},
-})
 hl.window_rule({ match = { class = "^(hyprland-donate-screen)$" }, float = true, center = true })
 
 -- OPACITY
@@ -199,21 +177,14 @@ hl.window_rule({ match = { tag = "wallpaper" },    opacity = "0.9 0.7" })
 hl.window_rule({ match = { class = "^(gedit|org.gnome.TextEditor|mousepad)$" }, opacity = "0.8 0.7" })
 hl.window_rule({ match = { class = "^(deluge)$" },   opacity = "0.9 0.8" })
 hl.window_rule({ match = { class = "^(seahorse)$" }, opacity = "0.9 0.8" })
-hl.window_rule({ match = { title = "^(Picture-in-Picture)$" }, opacity = "0.95 0.75" })
 
 -- SIZE
-hl.window_rule({ match = { tag = "KooL_Cheat" }, size = {"monitor_w*0.65", "monitor_h*0.9"} })
 hl.window_rule({ match = { tag = "wallpaper" },  size = {"monitor_w*0.7",  "monitor_h*0.7"} })
 hl.window_rule({ match = { tag = "settings" },   size = {"monitor_w*0.7",  "monitor_h*0.7"} })
 hl.window_rule({ match = { class = "^([Ff]erdium)$" }, size = {"monitor_w*0.6", "monitor_h*0.7"} })
 
 -- BLUR & FULLSCREEN
 hl.window_rule({ match = { tag = "games" }, no_blur = true })
--- NOTE: the old .conf had `match:tag games, fullscreen 0` twice. In the Lua API
--- `fullscreen` is a boolean, so `0` is ambiguous: read literally it means "do
--- not fullscreen games", which contradicts the section's intent. Left out
--- rather than guessed -- uncomment whichever you actually want:
--- hl.window_rule({ match = { tag = "games" }, fullscreen = true })
 
 -- Stop the hover popups in IntelliJ products from stealing focus
 hl.window_rule({ match = { class = "^(jetbrains-*)" }, no_initial_focus = true })
@@ -223,14 +194,29 @@ hl.window_rule({ match = { title = "^(wind.*)$" },     no_initial_focus = true }
 -- LAYER RULES
 -- ###########
 
-hl.layer_rule({ match = { namespace = "rofi" },                 blur = true })
-hl.layer_rule({ match = { namespace = "notifications" },        blur = true })
-hl.layer_rule({ match = { namespace = "quickshell:overview" },  blur = true })
-hl.layer_rule({ match = { namespace = "quickshell:overview" },  ignore_alpha = 0.5 })
+-- Noctalia: blur the bar, panels, dock, notifications, OSD and window switcher,
+-- and keep Hyprland's layer animations off them (Noctalia animates itself).
+-- https://docs.noctalia.dev/noctalia/compositor-settings/hyprland/
+hl.layer_rule({
+  name         = "noctalia",
+  match        = { namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$" },
+  no_anim      = true,
+  ignore_alpha = 0.5,
+  blur         = true,
+  blur_popups  = true,
+})
 
 -- #############################
 -- Named rules for special cases
 -- #############################
+
+-- Noctalia settings window
+hl.window_rule({
+  name  = "noctalia-settings",
+  match = { class = "^(dev.noctalia.Noctalia)$" },
+  float = true,
+  size  = {1080, 920},
+})
 
 hl.window_rule({
   name   = "Whatsapp-zapzap",

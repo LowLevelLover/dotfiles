@@ -81,6 +81,13 @@ if [[ "$DE" == *"hyprland"* ]]; then
     fi
     awww img -o "$FOCUSED_MONITOR" "$WP" $AWWW_PARAMS
     ln -sf "$WP" "$HOME/.config/hypr/wallpaper_effects/.wallpaper_current"
+
+    # Tell Noctalia the new wallpaper so its palette and the login greeter
+    # follow it. awww keeps drawing it (Noctalia's own wallpaper rendering is
+    # off). Fail-safe: a missing or stopped shell must not break this.
+    if command -v noctalia >/dev/null 2>&1; then
+        noctalia msg wallpaper-set "$WP" >/dev/null 2>&1 || true
+    fi
 fi
 
 if [ "$DE" == "enlightenment" ]; then

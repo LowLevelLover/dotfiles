@@ -8,7 +8,8 @@
 local mainMod     = "SUPER"
 local HOME        = os.getenv("HOME")
 local scriptsDir  = HOME .. "/.config/hypr/scripts"
-local UserScripts = HOME .. "/.config/hypr/UserScripts"
+-- Noctalia shell IPC: https://docs.noctalia.dev/noctalia/ipc/
+local ipc         = "noctalia msg "
 
 local ok, defaults = pcall(require, "UserConfigs.01-UserDefaults")
 if not ok then defaults = {} end
@@ -16,25 +17,19 @@ local term  = defaults.term  or "kitty"
 local files = defaults.files or "thunar"
 
 -- common shortcuts
--- hl.bind(mainMod .. " + " .. mainMod .. "_L", hl.dsp.exec_cmd("pkill rofi || rofi -show drun -modi drun,filebrowser,run,window"), { release = true })
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("pkill rofi || true && rofi -show drun -modi drun,filebrowser,run,window"), { description = "Main menu (app launcher)" })
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"), { description = "Main menu (Noctalia app launcher)" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd('xdg-open "https://"'), { description = "Default browser" })
--- NOTE: dead -- `ags -t` is AGS v1 syntax and the installed ags is v2, so this did nothing.
--- hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("pkill rofi || true && ags -t 'overview'"), { description = "Desktop overview" })
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(term),  { description = "Terminal" })
 hl.bind(mainMod .. " + E",      hl.dsp.exec_cmd(files), { description = "File manager" })
 
 -- FEATURES / EXTRAS
-hl.bind(mainMod .. " + O",                 hl.dsp.exec_cmd(scriptsDir .. "/KeyHints.sh"),        { description = "Help / cheat sheet" })
-hl.bind(mainMod .. " + ALT + R",           hl.dsp.exec_cmd(scriptsDir .. "/Refresh.sh"),         { description = "Refresh waybar, swaync, rofi" })
-hl.bind(mainMod .. " + ALT + E",           hl.dsp.exec_cmd(scriptsDir .. "/RofiEmoji.sh"),       { description = "Emoji menu" })
-hl.bind(mainMod .. " + S",                 hl.dsp.exec_cmd(scriptsDir .. "/RofiSearch.sh"),      { description = "Web search via rofi" })
+hl.bind(mainMod .. " + O",                 hl.dsp.exec_cmd(ipc .. "panel-toggle kenn/keybind-cheatsheet:cheatsheet"), { description = "Keybind cheat sheet" })
+hl.bind(mainMod .. " + ALT + R",           hl.dsp.exec_cmd(ipc .. "config-reload"),              { description = "Reload Noctalia config" })
+hl.bind(mainMod .. " + ALT + E",           hl.dsp.exec_cmd(ipc .. "panel-toggle launcher /emo"), { description = "Emoji menu (Noctalia launcher)" })
+hl.bind(mainMod .. " + S",                 hl.dsp.exec_cmd(scriptsDir .. "/RofiSearch.sh"),      { description = "Web search (Noctalia launcher)" })
 hl.bind(mainMod .. " + ALT + O",           hl.dsp.exec_cmd(scriptsDir .. "/ChangeBlur.sh"),      { description = "Toggle blur settings" })
--- hl.bind(mainMod .. " + SHIFT + G",      hl.dsp.exec_cmd(scriptsDir .. "/GameMode.sh"))
--- hl.bind(mainMod .. " + ALT + L",        hl.dsp.exec_cmd(scriptsDir .. "/ChangeLayout.sh"))
-hl.bind(mainMod .. " + ALT + V",           hl.dsp.exec_cmd(scriptsDir .. "/ClipManager.sh"),     { description = "Clipboard manager" })
-hl.bind(mainMod .. " + CTRL + R",          hl.dsp.exec_cmd(scriptsDir .. "/RofiThemeSelector.sh"), { description = "Rofi theme selector" })
-hl.bind(mainMod .. " + CTRL + SHIFT + R",  hl.dsp.exec_cmd("pkill rofi || true && " .. scriptsDir .. "/RofiThemeSelector-modified.sh"))
+hl.bind(mainMod .. " + ALT + V",           hl.dsp.exec_cmd(ipc .. "panel-toggle clipboard"),     { description = "Clipboard history (Noctalia)" })
+hl.bind(mainMod .. " + SHIFT + E",         hl.dsp.exec_cmd(ipc .. "settings-toggle"),            { description = "Noctalia settings" })
 
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen(),                       { description = "Full screen" })
 hl.bind(mainMod .. " + CTRL + F",  hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Fake full screen (maximize)" })
@@ -84,26 +79,18 @@ end
 hl.bind(mainMod .. " + ALT + mouse_down", zoomBy(2.0), { description = "Zoom in" })
 hl.bind(mainMod .. " + ALT + mouse_up",   zoomBy(0.5), { description = "Zoom out" })
 
--- Waybar / Bar related
-hl.bind(mainMod .. " + CTRL + ALT + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar"),           { description = "Toggle waybar" })
-hl.bind(mainMod .. " + CTRL + B",       hl.dsp.exec_cmd(scriptsDir .. "/WaybarStyles.sh"),  { description = "Waybar styles menu" })
-hl.bind(mainMod .. " + ALT + B",        hl.dsp.exec_cmd(scriptsDir .. "/WaybarLayout.sh"),  { description = "Waybar layout menu" })
+-- Bar related (Noctalia bar)
+hl.bind(mainMod .. " + CTRL + ALT + B", hl.dsp.exec_cmd(ipc .. "bar-toggle"),            { description = "Toggle bar" })
+hl.bind(mainMod .. " + ALT + B",        hl.dsp.exec_cmd(ipc .. "settings-toggle bar"),   { description = "Bar layout / widgets (Noctalia settings)" })
 
--- FEATURES / EXTRAS (UserScripts)
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(UserScripts .. "/RofiBeats.sh"), { description = "Online music via rofi" })
-hl.bind(mainMod .. " + ALT + C",   hl.dsp.exec_cmd(UserScripts .. "/RofiCalc.sh"),  { description = "Calculator" })
+-- FEATURES / EXTRAS
+-- Enter copies the result to the clipboard, like the old qalc + wl-copy script
+hl.bind(mainMod .. " + ALT + C",   hl.dsp.exec_cmd(ipc .. "panel-toggle launcher /calc"), { description = "Calculator (Noctalia launcher)" })
 hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(scriptsDir .. "/Animations.sh"), { description = "Hyprland animations menu" })
 hl.bind(mainMod .. " + CTRL + O",  hl.dsp.window.set_prop({ prop = "opaque", value = "toggle" }), { description = "Toggle opacity on active window" })
-hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(scriptsDir .. "/SwitchKeyboardLayout.sh"), { locked = true, non_consuming = true, description = "Change keyboard layout" })
--- hl.bind(mainMod .. " + SHIFT + K", hl.dsp.exec_cmd(scriptsDir .. "/KeyBinds.sh"))
-
--- NOTE: the following binds referenced scripts that do not exist in
--- ~/.config/hypr/UserScripts (only RainbowBorders.sh, RofiBeats.sh and
--- RofiCalc.sh are present), so they were dead binds and are left commented out:
--- hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd(UserScripts .. "/WallpaperSelect.sh"))
--- hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(UserScripts .. "/WallpaperEffects.sh"))
--- hl.bind("CTRL + ALT + W",          hl.dsp.exec_cmd(UserScripts .. "/WallpaperRandom.sh"))
--- hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd(UserScripts .. "/ZshChangeTheme.sh"))
+-- Noctalia runs `hyprctl switchxkblayout all next` and shows its layout OSD,
+-- so the bar's keyboard_layout widget stays in sync.
+hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(ipc .. "keyboard-layout-cycle"), { locked = true, non_consuming = true, description = "Change keyboard layout" })
 
 -- For passthrough of the keyboard into a VM
 -- hl.bind(mainMod .. " + ALT + P", hl.dsp.submap("passthru"))

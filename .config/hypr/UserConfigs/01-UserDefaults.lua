@@ -6,15 +6,11 @@
 --   local defaults = require("UserConfigs.01-UserDefaults")
 
 return {
-  -- Preferred text editor. Falls back to helix if $EDITOR is unset.
-  edit = os.getenv("EDITOR") or "hx",
-
   -- Used by UserConfigs/UserKeybinds.lua
   term  = "kitty",  -- Terminal
   files = "thunar", -- File manager
 
-  -- Default search engine for the rofi search bind (SUPER S).
-  -- NOTE: scripts/RofiSearch.sh is a shell script and cannot read this value;
-  -- it carries its own copy. Change it there too if you switch engines.
+  -- Default search engine for the web search bind (SUPER S); scripts/RofiSearch.sh
+  -- reads it from this line, {} is replaced with the URL-encoded query.
   search_engine = "https://www.google.com/search?q={}",
 }

@@ -28,14 +28,10 @@ if [[ -z "$Search_Engine" ]]; then
     exit 1
 fi
 
-# Rofi theme and message
-rofi_theme="$HOME/.config/rofi/config-search.rasi"
-msg='‼️ **note** ‼️ search via default web browser'
+# Ask in Noctalia's launcher. With no candidates on stdin it returns whatever is
+# typed; Esc prints nothing and exits 1.
+query=$(noctalia dmenu -p "Search" </dev/null) || exit 0
+[[ -n "$query" ]] || exit 0
 
-# Kill Rofi if already running before execution
-if pgrep -x "rofi" >/dev/null; then
-    pkill rofi
-fi
-
-# Open Rofi and pass the selected query to xdg-open for Google search
-echo "" | rofi -dmenu -config "$rofi_theme" -mesg "$msg" | xargs -I{} xdg-open $Search_Engine
+# URL-encode the query so &, #, + and spaces survive, then open it in the default browser
+xdg-open "${Search_Engine//\{\}/$(jq -rn --arg q "$query" '$q | @uri')}"

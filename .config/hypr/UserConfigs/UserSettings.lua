@@ -4,8 +4,9 @@
 
 hl.config({
   dwindle = {
-    preserve_split       = true,
-    special_scale_factor = 0.8, -- carried over from the old .conf, lost in the Lua migration
+    preserve_split = true,
+    -- special_scale_factor is deprecated; its 0.8 shrink is now a
+    -- workspace rule on s[true] in WorkspaceRules.lua
   },
 
   master = {
@@ -23,8 +24,8 @@ hl.config({
     kb_layout  = "us,ir",
     kb_variant = "",
     kb_model   = "",
-    -- SUPER+SPACE layout switching is done by scripts/SwitchKeyboardLayout.sh
-    -- (UserKeybinds.lua); grp:win_space_toggle here made it switch twice.
+    -- SUPER+SPACE switches layouts (UserKeybinds.lua); grp:win_space_toggle
+    -- here would make it switch twice.
     kb_options = "",
     kb_rules   = "",
 

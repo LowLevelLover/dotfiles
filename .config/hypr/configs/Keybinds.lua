@@ -10,13 +10,15 @@
 local mainMod    = "SUPER"
 local HOME       = os.getenv("HOME")
 local scriptsDir = HOME .. "/.config/hypr/scripts"
+-- Noctalia shell IPC: https://docs.noctalia.dev/noctalia/ipc/
+local ipc        = "noctalia msg "
 
 hl.bind("CTRL + ALT + Delete", hl.dsp.exit(),           { description = "Exit Hyprland" })
 hl.bind(mainMod .. " + Q",     hl.dsp.window.close(),   { description = "Close active window (not kill)" })
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.exec_cmd(scriptsDir .. "/KillActiveProcess.sh"), { description = "Kill active process" })
-hl.bind("CTRL + ALT + l",      hl.dsp.exec_cmd(scriptsDir .. "/LockScreen.sh"), { description = "Screen lock" })
-hl.bind("CTRL + ALT + P",      hl.dsp.exec_cmd(scriptsDir .. "/Wlogout.sh"),    { description = "Power menu" })
-hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("swaync-client -t -sw"),     { description = "swayNC notification panel" })
+hl.bind("CTRL + ALT + l",      hl.dsp.exec_cmd(ipc .. "session lock"),          { description = "Screen lock (Noctalia)" })
+hl.bind("CTRL + ALT + P",      hl.dsp.exec_cmd(ipc .. "panel-toggle session"),  { description = "Power menu (Noctalia session menu)" })
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"), { description = "Notification history (Noctalia control center)" })
 
 -- Master Layout
 hl.bind(mainMod .. " + CTRL + D",      hl.dsp.layout("removemaster"))
@@ -37,16 +39,20 @@ hl.bind(mainMod .. " + M", hl.dsp.layout("splitratio 0.3"))
 -- hl.bind(mainMod .. " + CTRL + tab", hl.dsp.group.next())
 
 -- Cycle windows; if floating, bring to top
+-- NOTE: Noctalia has its own Alt+Tab overlay (`noctalia msg window-switcher hold`);
+-- it is not bound so this existing ALT+tab cycle keeps working.
 hl.bind("ALT + tab", function()
   hl.dispatch(hl.dsp.window.cycle_next())
   hl.dispatch(hl.dsp.window.bring_to_top())
 end)
 
 -- Special Keys / Hot Keys
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --inc"),        { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --dec"),        { locked = true, repeating = true })
-hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --toggle-mic"), { locked = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --toggle"),     { locked = true })
+-- Volume goes through Noctalia so its OSD shows (5% steps). Boosting past 100%
+-- needs `[audio] enable_overdrive = true` in its config (it is set).
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"),                      { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down"),                    { locked = true, repeating = true })
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd(ipc .. "mic-mute"),                       { locked = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(ipc .. "volume-mute"),                    { locked = true })
 hl.bind("XF86Sleep",            hl.dsp.exec_cmd("systemctl suspend"),                     { locked = true })
 hl.bind("XF86Rfkill",           hl.dsp.exec_cmd(scriptsDir .. "/AirplaneMode.sh"),        { locked = true })
 

@@ -6,7 +6,7 @@
 # Options are now set with `hyprctl eval` + hl.config(), and read with
 # `hyprctl getoption` using dot-separated names (decoration.blur.passes).
 
-notif="$HOME/.config/swaync/images"
+notif="$HOME/.config/hypr/icons"
 
 STATE=$(hyprctl -j getoption decoration.blur.passes | jq ".int")
 

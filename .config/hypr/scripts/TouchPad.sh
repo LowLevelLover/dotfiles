@@ -9,7 +9,7 @@
 # config moved to Lua, `hyprctl keyword` no longer exists; the device is
 # reconfigured directly with `hyprctl eval` instead.
 
-notif="$HOME/.config/swaync/images/ja.png"
+notif="$HOME/.config/hypr/icons/ja.png"
 
 # Keep this in sync with UserConfigs/Laptops.lua
 TOUCHPAD_DEVICE="asue120d:00-04f3:31fb-touchpad"

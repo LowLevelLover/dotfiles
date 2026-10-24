@@ -5,8 +5,17 @@
 -- You can set workspace rules to achieve workspace-specific behaviors, e.g. a
 -- workspace where all windows are drawn without borders or gaps.
 --
--- No rules are active by default -- the previous workspaces.conf was entirely
--- commented-out examples. Below are the same examples in Lua form.
+-- Special workspaces (scratchpad) get wide outer gaps so windows sit centered
+-- at ~80% of the screen. Replaces the deprecated dwindle:special_scale_factor
+-- = 0.8. Values are logical px: eDP-1 is 2560x1600 @ 1.25 -> 2048x1280, so a
+-- 10% margin per side is ~205 horizontally and 128 vertically.
+hl.workspace_rule({
+  workspace = "s[true]",
+  gaps_out  = { top = 128, bottom = 128, left = 205, right = 205 },
+})
+
+-- The rest of the previous workspaces.conf was commented-out examples.
+-- Below are the same examples in Lua form.
 
 -- Assigning a workspace to a certain monitor:
 -- hl.workspace_rule({ workspace = "1", monitor = "eDP-1" })

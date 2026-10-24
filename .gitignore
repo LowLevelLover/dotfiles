@@ -9,3 +9,6 @@
 .config/variety/banned.txt
 
 .config/*/**.log
+
+# Runtime state and generated files
+.config/hypr/wallpaper_effects/.wallpaper_current

@@ -1,0 +1,416 @@
+# Noctalia shell 5.3.0 - hand-written user config (replaces waybar, dunst,
+# rofi menus, hyprlock/hypridle and hyprpolkitagent from the JaKooLit setup).
+#
+# Load order (later wins, deep-merged per key):
+#   1. built-in defaults
+#   2. every *.toml in ~/.config/noctalia/ (this dir), alphabetical
+#   3. ~/.local/state/noctalia/settings.toml - written by the Settings GUI and
+#      by IPC such as `wallpaper-set` / `theme-mode-set`. Noctalia never rewrites
+#      the hand-written files here, but anything saved in settings.toml overrides
+#      them. To make a GUI tweak permanent, copy it here and delete it there.
+# Both layers are hot-reloaded. Check: `noctalia config validate`.
+
+# --- Shell ------------------------------------------------------------------
+
+[shell]
+# Must be a system-wide font (fonts.packages) so the greeter can render it too.
+# The bar text uses it, which is what lets nerd-font characters show up in
+# custom_button labels (the icon slot only draws Tabler icons).
+font_family = "FiraCode Nerd Font"
+time_format = "{:%H:%M}"
+
+# Built-in polkit agent (the default is false). hyprpolkitagent has been removed.
+polkit_agent = true
+
+# App launching. noctalia.service sets __EGL_VENDOR_LIBRARY_FILENAMES and
+# VK_DRIVER_FILES (Mesa/Intel only) so the shell never wakes the NVIDIA dGPU.
+# With this on, launcher/taskbar/tray-activated apps run as transient
+#   systemd-run --user --slice=app.slice --unit=app-<desktop-id>@<uuid>.service
+# units in their own cgroup, so they survive noctalia restarts. Caveat:
+# Noctalia still forwards its whole environment (systemd-run -E NAME for every
+# variable). That means the Mesa-only vars are removed by the system drop-in
+# app-.service.d (UnsetEnvironment=...) in nixos-config/noctalia.nix, not by
+# this option. Do NOT set launch_apps_custom_command: systemd mode ignores it.
+# Bar `exec` actions, hooks and idle commands are NOT covered; they run as
+# children of noctalia.service with its env; wrap a GUI command in
+# `systemd-run --user --collect --quiet --` to give it the user manager's env.
+launch_apps_as_systemd_services = true
+
+# Clipboard history. Noctalia records
+# it itself over the Wayland ext-data-control-v1 protocol, falling back to
+# wlr-data-control. Open it with `noctalia msg panel-toggle clipboard`.
+clipboard_enabled = true
+clipboard_history_max_entries = 100
+
+# This config is declarative: skip the first-run wizard (it writes to settings.toml).
+setup_wizard_enabled = false
+telemetry_enabled = false
+
+[shell.greeter_sync]
+# Mirror the appearance (palette, wallpaper, font, layout) to the login screen.
+# privilege_command stays empty: secure sync runs
+# `pkexec noctalia-greeter-apply-appearance --sync <staging>`, and a polkit
+# rule allows that for farzin without a password.
+auto_sync = true
+
+# Session menu: the suspend entry is lock_and_suspend, so suspending from the
+# menu always locks first. This matches the built-in default, pinned here.
+[[shell.session.actions]]
+action = "lock"
+shortcut = "1"
+
+[[shell.session.actions]]
+action = "logout"
+shortcut = "2"
+
+[[shell.session.actions]]
+action = "lock_and_suspend"
+shortcut = "3"
+
+[[shell.session.actions]]
+action = "reboot"
+shortcut = "4"
+
+[[shell.session.actions]]
+action = "shutdown"
+shortcut = "5"
+variant = "destructive"
+
+# --- Launcher (apps + calculator + emoji; clipboard via the Panels provider) -
+
+[shell.launcher]
+provider_prefix = "/"
+
+[shell.launcher.providers.calculator]
+prefix = "calc"
+global = true        # results appear when the query contains a digit
+
+[shell.launcher.providers.emoji]
+prefix = "emo"       # /emo <name>
+
+[shell.launcher.providers.panels]
+prefix = "pan"       # /pan clip -> Clipboard history panel
+global = true        # typing "clipboard" in plain search also offers it
+
+# --- Bar (one bar, top, spawned on every monitor) ----------------------------
+
+[bar.main]
+position = "top"
+font_family = "FiraCode Nerd Font"
+margin_edge = 3      # waybar margin-top
+margin_ends = 8      # waybar margin-left/right
+start = ["workspaces", "cpu", "cpu-cat", "memory", "weather", "bongocat"]
+center = [
+  "launcher", "caffeine", "clock", "jalali-date", "world-clock", "timer",
+  "theme_mode", "keybind-cheatsheet",
+]
+end = [
+  "notes", "shelf", "hyprland-settings", "drive-health",
+  "network", "net-monitor",
+  "notifications", "tray", "media", "bluetooth",
+  "volume", "microphone", "lock_keys", "battery",
+  "keyboard_layout", "session",
+]
+
+# Left ------------------------------------------------------------------------
+
+[widget.workspaces]
+type = "workspaces"
+style = "regular"
+label_source = "id"
+
+[widget.cpu]
+type = "sysmon"
+stat = "cpu_usage"
+visualization = "none"
+
+[widget.memory]
+type = "sysmon"
+stat = "ram_used"
+visualization = "none"
+
+[widget.weather]
+type = "weather"
+show_condition = true
+show_temperature = true
+
+# Center ----------------------------------------------------------------------
+
+[widget.launcher]
+type = "launcher"    # left click: panel-toggle launcher
+
+[widget.caffeine]
+type = "caffeine"    # idle inhibitor (replaces waybar idle_inhibitor)
+
+[widget.clock]
+type = "clock"
+format = "{:%H:%M}"
+tooltip_format = "{:%A, %d %B %Y}"
+
+[widget.theme_mode]
+type = "theme_mode"  # left click: theme-mode-toggle (dark <-> light)
+
+# Right -----------------------------------------------------------------------
+
+[widget.network]
+type = "network"
+show_label = false
+
+[widget.notifications]
+type = "notifications" # left: history panel, right: toggle Do Not Disturb
+
+[widget.tray]
+type = "tray"
+
+[widget.media]
+type = "media"
+hide_when_no_media = true
+max_length = 40
+
+[widget.bluetooth]
+type = "bluetooth"
+
+[widget.volume]
+type = "volume"
+device = "output"
+
+[widget.microphone]
+type = "volume"
+device = "input"
+
+[widget.lock_keys]
+type = "lock_keys"
+show_caps_lock = true
+show_num_lock = true
+show_scroll_lock = false
+
+[widget.battery]
+type = "battery"
+
+[widget.keyboard_layout]
+type = "keyboard_layout" # left click: keyboard-layout-cycle (us, ir)
+
+[widget.session]
+type = "session"
+
+# Plugin widgets ([plugins] enabled, below). Left click opens each plugin's panel.
+
+[widget.cpu-cat]
+type = "dotnetrob/cat:cat"                        # runs faster with CPU load
+
+[widget.bongocat]
+type = "noctalia/bongocat:cat"
+
+[widget.jalali-date]
+type = "borderliner/jalali_calendar:date"         # Solar Hijri date; click: calendar
+
+[widget.world-clock]
+type = "noctalia/world_clock:bar"
+
+[widget.timer]
+type = "noctalia/timer:bar"
+
+[widget.keybind-cheatsheet]
+type = "kenn/keybind-cheatsheet:keybinds"          # also SUPER+O
+
+[widget.notes]
+type = "noctalia/notes:notes"
+
+[widget.shelf]
+type = "alok-debnath/shelf:shelf"                 # right click: drop window
+
+[widget.hyprland-settings]
+type = "michael-retunzew/hyprland-settings:button"
+
+[widget.drive-health]
+type = "gustav0ar/drive-health:summary"
+
+[widget.net-monitor]
+type = "mahmoudomiesh/network-monitor:indicator"  # speed + listening ports
+
+# --- Notifications -------------------------------------------------------------
+
+[notification]
+enable_daemon = true            # owns org.freedesktop.Notifications (dunst removed)
+position = "top_center"
+keep_dismissed_in_history = true
+history_retention_hours = 0     # keep history until cleared
+# Timeouts: Noctalia uses the sender's expire_timeout: -1 (notify-send default)
+# means 6000 ms and 0 means sticky, for every urgency. There is no per-urgency
+# default, and filters cannot match on urgency (allowed_urgencies hides
+# notifications that don't match). So low=3s / critical=sticky has to come
+# from the sender: `notify-send -u low -t 3000`, `notify-send -u critical -t 0`.
+# Low-urgency notifications are toast-only and never stored in history.
+
+# --- OSD -------------------------------------------------------------------------
+
+[osd]
+enabled = true
+position = "bottom_center"      # keeps clear of the top-center toasts
+
+[osd.kinds]
+volume = true
+volume_output = true
+volume_input = true
+brightness = true
+keyboard_backlight = true
+
+# --- Audio / brightness ----------------------------------------------------------
+
+[audio]
+enable_overdrive = true         # allow up to 150%
+
+[brightness]
+minimum_brightness = 0.05       # 5% floor like the old brightness script
+
+# --- Idle (replaces hypridle) ---------------------------------------------------
+# Uses ext-idle-notify-v1 and respects idle inhibitors (caffeine, video players).
+# Defining any [idle.behavior.*] replaces the built-in (disabled) seeds, so each
+# behavior is enabled explicitly. No pre-idle notification is configured.
+
+[idle]
+behavior_order = ["lock", "screen-off", "suspend"]
+pre_action_fade_seconds = 2.0   # short dim before acting; any input cancels
+
+[idle.behavior.lock]
+enabled = true
+timeout = 600
+action = "lock"
+
+[idle.behavior.screen-off]
+enabled = true
+timeout = 630                   # unlocked: 30 s after the idle lock
+locked_timeout = 30             # once locked (idle or manual): 30 s
+action = "screen_off"           # DPMS back on at the next input
+
+[idle.behavior.suspend]
+enabled = true
+timeout = 1200
+action = "lock_and_suspend"
+
+# --- Lock screen ------------------------------------------------------------------
+
+[lockscreen]
+enabled = true
+lock_before_suspend = true      # lid close / systemctl suspend lock first (logind delay inhibitor)
+blur_intensity = 0.5            # blurred wallpaper background
+tint_intensity = 0.3
+
+# The lock screen only shows a clock through a lockscreen widget.
+[lockscreen_widgets]
+enabled = true
+
+[lockscreen_widgets.widget.clock_main]
+type = "clock"
+cx = 1024.0                     # centre, in logical px of eDP-1 (2560x1600 @ 1.25)
+cy = 300.0
+placement_width = 2048.0
+placement_height = 1280.0
+box_width = 620.0
+box_height = 260.0
+
+[lockscreen_widgets.widget.clock_main.settings]
+clock_style = "digital"
+format = "{:%H:%M}\n{:%A, %d %B}"
+center_text = true
+background = false
+shadow = true
+
+# --- Wallpaper: drawn by awww (+ variety), only read by Noctalia -------------------
+# Noctalia draws no wallpaper surface. The wallpaper scripts tell it the
+# current image with
+#   noctalia msg wallpaper-set "$(readlink -f ~/.config/hypr/wallpaper_effects/.wallpaper_current)"
+# which repaints the palette and the lock screen background and saves the path
+# to settings.toml (wallpaper.default / wallpaper.monitors). Pass the resolved
+# file: the path is not symlink-resolved, so the same symlink path would look
+# unchanged.
+
+[wallpaper]
+enabled = false
+
+# First-run fallback until the first wallpaper-set; settings.toml overrides it.
+[wallpaper.default]
+path = "~/.config/hypr/wallpaper_effects/.wallpaper_current"
+
+# --- Theming -------------------------------------------------------------------------
+
+[theme]
+source = "wallpaper"            # palette generated from the wallpaper above
+wallpaper_scheme = "m3-content"
+mode = "light"                  # the theme_mode widget toggles it
+sync_color_scheme = true        # sets the GNOME color-scheme pref (prefer-dark/light) only
+
+# No app templates: the palette only themes Noctalia itself and the greeter.
+# Keep the hyprland template off: its noctalia.lua is require()d, and Hyprland
+# reloads the whole config whenever it changes (every wallpaper change), which
+# undoes PowerProfile.sh's battery mode and the touchpad/blur toggles.
+[theme.templates]
+enable_builtin_templates = false
+enable_community_templates = false
+
+# --- Weather / location ----------------------------------------------------------------
+# Fixed address instead of IP geolocation, which the proxy/VPN skews. Geocoded
+# once via api.noctalia.dev (-> 36.84, 54.44); also drives night light and auto theme.
+
+[location]
+auto_locate = false
+address = "Gorgan, Iran"
+
+[weather]
+enabled = true
+unit = "metric"                 # metric | imperial
+refresh_minutes = 30
+
+# --- Off ---------------------------------------------------------------------------------
+
+[dock]
+enabled = false
+
+[desktop_widgets]
+enabled = false
+
+[system.monitor]
+enabled = true                  # feeds the cpu / memory / network-speed widgets
+
+# Power profiles: no config needed. Noctalia speaks
+# org.freedesktop.UPower.PowerProfiles, which TLP's tlp-pd provides
+# (services.tlp.pd.enable). Switch from the control center's Power Profile shortcut.
+
+# --- Plugins -----------------------------------------------------------------------------
+# Noctalia fetches these from the default official + community git sources into
+# ~/.local/state/noctalia/plugins and updates them (auto_update = "all", every 6 h).
+# Tools they need that NixOS lacks come from nixos-config/noctalia-plugins.nix.
+
+[plugins]
+enabled = [
+  # official
+  "noctalia/bongocat",                 # bar cat that taps along to typing / music
+  "noctalia/notes",                    # side-panel notes (~/Documents/Notes), /nt
+  "noctalia/timer",                    # countdown timer
+  "noctalia/world_clock",              # multi-timezone clock
+  # community
+  "dotnetrob/cat",                     # running cat, speed follows CPU usage
+  "blackbartblues/audio-switcher",     # output / input switcher, /audio
+  "sankity/soundcore-buds",            # Soundcore battery / ANC via openscq30
+  "borderliner/jalali_calendar",       # Solar Hijri calendar + Iranian holidays
+  "lfdominguez/claude-sessions",       # live Claude Code sessions, /cs
+  "raycursive/github-prs",             # PRs + CI / review state via gh
+  "davemhammer/k8s-status",            # nodes / pods / deployments, /kube
+  "knyrps/nix-search",                 # nixpkgs / NixOS / HM / NUR search, /nix
+  "mahmoudomiesh/network-monitor",     # speed + listening ports
+  "cleboost/ssh-launcher",             # hosts from ~/.ssh/config, /ssh
+  "gustav0ar/drive-health",            # SMART / temperature / usage
+  "vn1k/cursor",                       # cursor theme picker / builder
+  "alexmnrs/github-activity",          # GitHub contribution calendar via gh
+  "michael-retunzew/hyprland-settings", # Hyprland Lua settings panel, /hyprland
+  "kenn/keybind-cheatsheet",           # searchable Hyprland keybinds
+  "alok-debnath/shelf",                # drag-and-drop file shelf
+]
+
+# NixOS-specific interpreters (from noctalia-plugins.nix). shelf needs python3
+# with PyGObject + GTK 4 typelibs; cursor's engine needs wand + win2xcur.
+[plugin_settings."alok-debnath/shelf"]
+python = "/run/current-system/sw/bin/noctalia-shelf-python"
+
+[plugin_settings."vn1k/cursor"]
+engine_path = "/run/current-system/sw/bin/noctalia-cursor-engine"

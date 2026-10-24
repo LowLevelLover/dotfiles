@@ -5,6 +5,8 @@
 local mainMod    = "SUPER"
 local HOME       = os.getenv("HOME")
 local scriptsDir = HOME .. "/.config/hypr/scripts"
+-- Noctalia shell IPC: https://docs.noctalia.dev/noctalia/ipc/
+local ipc        = "noctalia msg "
 
 -- Touchpad device. Run `hyprctl devices` to find your own name.
 -- scripts/TouchPad.sh flips `enabled` on this device at runtime.
@@ -13,13 +15,19 @@ local scriptsDir = HOME .. "/.config/hypr/scripts"
 -- touchpad toggle was a no-op. Corrected against `hyprctl devices`.
 local Touchpad_Device = "asue120d:00-04f3:31fb-touchpad"
 
-hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/BrightnessKbd.sh --dec"), { repeating = true })
-hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd(scriptsDir .. "/BrightnessKbd.sh --inc"), { repeating = true })
+-- Backlights go through Noctalia so its OSD shows. The keyboard backlight is
+-- driven over UPower (asus::kbd_backlight, levels 0-3: one level per press).
+hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(ipc .. "keyboard-backlight-down"), { repeating = true })
+hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd(ipc .. "keyboard-backlight-up"),   { repeating = true })
+-- logind ignores the power key (HandlePowerKey = "ignore" in configuration.nix),
+-- so a press only opens the session menu and nothing happens without a choice.
+hl.bind("XF86PowerOff", hl.dsp.exec_cmd(ipc .. "panel-toggle session"), { description = "Power button: session menu" })
 hl.bind("XF86Launch1", hl.dsp.exec_cmd("rog-control-center"),  { description = "ASUS Armoury Crate button" })
 hl.bind("XF86Launch3", hl.dsp.exec_cmd("asusctl led-mode -n"), { description = "FN+F4 switch keyboard RGB profile" })
 hl.bind("XF86Launch4", hl.dsp.exec_cmd("asusctl profile -n"),  { description = "FN+F5 change fan profile" })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/Brightness.sh --dec"), { repeating = true })
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(scriptsDir .. "/Brightness.sh --inc"), { repeating = true })
+-- 10% steps; the floor is `[brightness] minimum_brightness` in Noctalia's config.
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. "brightness-down 10%"), { repeating = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(ipc .. "brightness-up 10%"),   { repeating = true })
 hl.bind("XF86TouchpadToggle",    hl.dsp.exec_cmd(scriptsDir .. "/TouchPad.sh"), { description = "Toggle touchpad" })
 
 -- Screenshot keybinds using F6 (no PrintScreen button on this keyboard)
@@ -44,11 +52,6 @@ hl.device({
 --   hl.monitor({ output = "eDP-1", disabled = true })
 -- end, { locked = true })
 
--- WARNING! Using the method above has some caveats!
--- CONS: you need to set up your wallpaper (SUPER W) and choose a wallpaper.
--- CAVEATS: sometimes the main laptop monitor does not come back and needs the
--- external monitor reconnected. A workaround is to make sure the lid is OPEN
--- before shutting down.
--- NOTE: displays for the laptop are written into UserConfigs/LaptopDisplay.lua.
--- Use this if you do not want the main laptop monitor to wake up during e.g. a
--- wallpaper change.
+-- WARNING! Using the method above has some caveats: sometimes the main laptop
+-- monitor does not come back and needs the external monitor reconnected. A
+-- workaround is to make sure the lid is OPEN before shutting down.
