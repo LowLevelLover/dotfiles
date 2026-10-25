@@ -1,0 +1,23 @@
+# Stow's default ignore list (a local ignore file replaces it entirely)
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+
+# This file itself
+^/\.stow-local-ignore
+
+# Claude Code's per-project settings for this repo, not a dotfile
+^/\.claude
