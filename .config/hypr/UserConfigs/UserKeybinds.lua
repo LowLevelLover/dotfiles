@@ -89,8 +89,9 @@ hl.bind(mainMod .. " + ALT + C",   hl.dsp.exec_cmd(ipc .. "panel-toggle launcher
 hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(scriptsDir .. "/Animations.sh"), { description = "Hyprland animations menu" })
 hl.bind(mainMod .. " + CTRL + O",  hl.dsp.window.set_prop({ prop = "opaque", value = "toggle" }), { description = "Toggle opacity on active window" })
 -- Noctalia runs `hyprctl switchxkblayout all next` and shows its layout OSD,
--- so the bar's keyboard_layout widget stays in sync.
-hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(ipc .. "keyboard-layout-cycle"), { locked = true, non_consuming = true, description = "Change keyboard layout" })
+-- so the bar's keyboard_layout widget stays in sync. Not non_consuming: that
+-- would also pass the SPACE through to the focused window and type a space.
+hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(ipc .. "keyboard-layout-cycle"), { locked = true, description = "Change keyboard layout" })
 
 -- For passthrough of the keyboard into a VM
 -- hl.bind(mainMod .. " + ALT + P", hl.dsp.submap("passthru"))
